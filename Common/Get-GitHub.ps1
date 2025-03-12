@@ -34,8 +34,6 @@ function Get-GitHub {
         $uri = "https://raw.githubusercontent.com/${OutPath}"
     }
     
-    Write-Verbose "URI: $uri"
+    Write-Host "URI: $uri"
     Invoke-WebRequest $uri -OutFile $OutPath
 }
-
-Get-Help Get-GitHub
