@@ -16,7 +16,7 @@ function Get-GitHub {
         [string]$FilePath,
 
         [Parameter(Mandatory, Position=0, ParameterSetName="Joined")]
-        [string]$JoinedFilePath,
+        [string]$JoinedPath,
 
         [Parameter()]
         [Alias("o")]
@@ -30,10 +30,10 @@ function Get-GitHub {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     }
 
-    if ([string]::IsNullOrWhiteSpace($JoinedFilePath)) {
-        $uri = "https://raw.githubusercontent.com/${Owner}/${repo}/${branch}/${FilePath}"
+    if (Test-Path variable:JoinedPath) {
+        $uri = "https://raw.githubusercontent.com/${JoinedPath}"
     } else {
-        $uri = "https://raw.githubusercontent.com/${JoinedFilePath}"
+        $uri = "https://raw.githubusercontent.com/${Owner}/${repo}/${branch}/${FilePath}"
     }
     
     Write-Debug "uri: $uri"
