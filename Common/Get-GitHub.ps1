@@ -1,7 +1,7 @@
 # Reference: https://computer-science-student.tistory.com/297
 
 function Get-GitHub {
-    [CmdletBinding(DefaultParameterSetName="Splitted")]
+    [CmdletBinding(DefaultParameterSetName="Joined")]
     param (
         [Parameter(Mandatory, Position=0, ParameterSetName="Splitted")]
         [string]$Owner,
@@ -38,4 +38,4 @@ function Get-GitHub {
     Invoke-WebRequest $uri -OutFile $OutPath
 }
 
-
+Get-Help Get-GitHub
