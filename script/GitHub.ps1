@@ -18,22 +18,37 @@ function Get-GitHub {
         [Parameter(Mandatory, Position=0, ParameterSetName="Joined")]
         [string]$JoinedFilePath,
 
-        [Parameter(Mandatory, ParameterSetName="Splitted")]
-        [Parameter(Mandatory, ParameterSetName="Joined")]
+        [Parameter()]
         [Alias("o")]
         [string]$OutPath
     )
+
+    
+    Write-Debug (Get-PSCallStack)[0]
 
     if (-not $IsCoreCLR) {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     }
 
-    if ([string]::IsNullOrWhiteSpace($OutPath)) {
+    if ([string]::IsNullOrWhiteSpace($JoinedFilePath)) {
         $uri = "https://raw.githubusercontent.com/${Owner}/${repo}/${branch}/${FilePath}"
     } else {
         $uri = "https://raw.githubusercontent.com/${JoinedFilePath}"
     }
     
-    Write-Host "URI: $uri"
-    Invoke-WebRequest $uri -OutFile $OutPath
+    Write-Debug "uri: $uri"
+
+    $result = Invoke-WebRequest $uri
+    
+    if (-not [string]::IsNullOrWhiteSpace($OutPath)) {
+        Write-Debug "OutPath: $OutPath"
+        Out-File -FilePath $OutPath -InputObject $result.Content
+    }
+
+    Write-Verbose @"
+result:
+$result
+"@ 
+
+    return $result
 }
