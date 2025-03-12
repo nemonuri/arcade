@@ -31,7 +31,7 @@ function Get-GitHub {
     if ([string]::IsNullOrWhiteSpace($OutPath)) {
         $uri = "https://raw.githubusercontent.com/${Owner}/${repo}/${branch}/${FilePath}"
     } else {
-        $uri = "https://raw.githubusercontent.com/${OutPath}"
+        $uri = "https://raw.githubusercontent.com/${JoinedFilePath}"
     }
     
     Write-Host "URI: $uri"
