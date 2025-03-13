@@ -1,4 +1,6 @@
 
+Write-Debug "HelloWorld.ps1 Invoked"
+
 function Write-HelloWorld {
     param (
     )
