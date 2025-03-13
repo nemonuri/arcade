@@ -1,52 +1,35 @@
 using namespace System.IO
 
-function Set-ScriptArtifactDirectoryPath {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory, Position=0)]
-        [string]
-        $Path
-    )
-
-    Write-Debug (Get-PSCallStack)[0]
-    Write-Debug "Path: $Path"
-
-    $env:ScriptArtifactDirectoryPath = $Path
-}
-
-function Get-ScriptArtifactDirectoryPath {
-    return $env:ScriptArtifactDirectoryPath
-}
-
-function Get-ScriptArtifactDirectory {
-    [CmdletBinding()]
-    param (
-        [Parameter()]
-        [switch]
-        $CreateIfNotExist
-    )
-}
-
 function Import-ArcadeScript {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName="Default")]
     param (
-        [Parameter(Mandatory, ValueFromPipeline, Position=0, HelpMessage="Download uri")]
+        [Parameter(Mandatory, ValueFromPipeline, ParameterSetName="Default", HelpMessage="Download uri")]
         [ValidateNotNullOrEmpty()]
         [string]$Uri,
 
-        [Parameter(Mandatory, Position=1, HelpMessage="Arcade script directory path")]
+        [Parameter(Mandatory, ParameterSetName="Default", HelpMessage="Arcade script directory path")]
         [ValidateNotNullOrEmpty()]
         [string]$RootPath,
 
-        [Parameter()]
+        [Parameter(ParameterSetName="Default")]
+        [Parameter(ParameterSetName="NemonuriPreset")]
         [string]$SubPath,
 
-        [Parameter(Mandatory, Position=2, HelpMessage="Arcade script name without extension")]
+        [Parameter(Mandatory, ParameterSetName="Default", HelpMessage="Arcade script name without extension")]
+        [Parameter(Mandatory, ParameterSetName="NemonuriPreset", HelpMessage="Arcade script name without extension")]
         [ValidateNotNullOrEmpty()]
         [string]$Name,
 
-        [Parameter()]
+        [Parameter(ParameterSetName="Default")]
+        [Alias("crd")]
         [switch]$CreateRootDirectoryIfNotExist,
+
+        [Parameter(ParameterSetName="NemonuriPreset")]
+        [Alias("np")]
+        [switch]$NemonuriPreset,
+
+        [Parameter(ParameterSetName="NemonuriPreset")]
+        [string]$RootParentPath,
 
         [Parameter()]
         [switch]$Force
@@ -58,7 +41,35 @@ function Import-ArcadeScript {
     Write-Debug "SubPath: $SubPath"
     Write-Debug "Name: $Name"
     Write-Debug "CreateRootDirectoryIfNotExist: $CreateRootDirectoryIfNotExist"
+
+    Write-Debug "NemonuriPreset: $NemonuriPreset"
+    Write-Debug "RootParentPath: $RootParentPath"
     Write-Debug "Force: $Force"
+
+
+    #--- Set Nemonuri preset if switch actived ---
+    if ($NemonuriPreset) {
+        Write-Debug "Apply NemonuriPreset"
+
+        if ([string]::IsNullOrWhiteSpace($RootParentPath)) {
+            Write-Debug "RootParentPath is empty"
+            $RootParentPath = (Get-Location).Path
+            Write-Debug "Set RootParentPath: $RootParentPath"
+        }
+
+        $RootPath = [Path]::Combine($RootParentPath, ".arcade", ".script")
+        Write-Debug "Set RootPath: $RootPath"
+
+        $uriSubPathSegment = ""
+        if (-not [string]::IsNullOrWhiteSpace($SubPath)) {
+            $uriSubPathSegment = "${SubPath}/"
+        }
+        Write-Debug "uriSubPathSegment: $uriSubPathSegment"
+
+        $Uri = "https://raw.githubusercontent.com/nemonuri/nemonuri-arcade/master/script/${uriSubPathSegment}${Name}.ps1"
+        Write-Debug "Uri: $Uri"
+    }
+    #---|
 
     #--- If arcade script root directory does not exist, create it ---
     [bool]$doesArcadeScriptRootDirectoryExist = [Directory]::Exists($RootPath)
