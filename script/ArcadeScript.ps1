@@ -18,10 +18,12 @@ function Import-ArcadeScript {
         [Parameter(Mandatory, ParameterSetName="Default", HelpMessage="Arcade script name without extension")]
         [Parameter(Mandatory, ParameterSetName="NemonuriPreset", HelpMessage="Arcade script name without extension")]
         [ValidateNotNullOrEmpty()]
+        [Alias("n")]
         [string]$Name,
 
         [Parameter(ParameterSetName="Default")]
-        [Alias("crd")]
+        [Parameter(ParameterSetName="NemonuriPreset")]
+        [Alias("cr")]
         [switch]$CreateRootDirectoryIfNotExist,
 
         [Parameter(ParameterSetName="NemonuriPreset")]
