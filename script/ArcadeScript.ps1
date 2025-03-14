@@ -12,42 +12,48 @@ function Import-ArcadeScript {
         [string]$RootPath,
 
         [Parameter(ParameterSetName="Default")]
-        [Parameter(ParameterSetName="NemonuriPreset")]
         [string]$SubPath,
 
         [Parameter(Mandatory, ParameterSetName="Default", HelpMessage="Arcade script name without extension")]
-        [Parameter(Mandatory, ParameterSetName="NemonuriPreset", HelpMessage="Arcade script name without extension")]
         [ValidateNotNullOrEmpty()]
-        [Alias("n")]
         [string]$Name,
 
-        [Parameter(ParameterSetName="Default")]
-        [Parameter(ParameterSetName="NemonuriPreset")]
-        [Alias("cr")]
-        [switch]$CreateRootDirectoryIfNotExist,
+        [Parameter()]
+        [switch]$NoNewRoot,
 
-        [Parameter(ParameterSetName="NemonuriPreset")]
-        [Alias("np")]
+        [Parameter(Mandatory, ParameterSetName="NemonuriPreset")]
+        [Alias("NM")]
         [switch]$NemonuriPreset,
 
         [Parameter(ParameterSetName="NemonuriPreset")]
         [string]$RootParentPath,
 
+        [Parameter(Mandatory, ValueFromPipeline, Position=0, ParameterSetName="NemonuriPreset")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ScriptPath,
+
         [Parameter()]
         [switch]$Force
     )
+
+    if ($MyInvocation.CommandOrigin -ne 'Internal') {
+        throw "Use dot sourcing. MyInvocation.CommandOrigin: $($MyInvocation.CommandOrigin)"
+    }
 
     Write-Debug (Get-PSCallStack)[0]
     Write-Debug "Uri: $Uri"
     Write-Debug "RootPath: $RootPath"
     Write-Debug "SubPath: $SubPath"
     Write-Debug "Name: $Name"
-    Write-Debug "CreateRootDirectoryIfNotExist: $CreateRootDirectoryIfNotExist"
+    Write-Debug "CreateRootDirectory: $CreateRootDirectory"
 
     Write-Debug "NemonuriPreset: $NemonuriPreset"
     Write-Debug "RootParentPath: $RootParentPath"
+    Write-Debug "ScriptPath: $ScriptPath"
+
     Write-Debug "Force: $Force"
 
+    $CreateRootDirectory = -not $NoNewRoot
 
     #--- Set Nemonuri preset if switch actived ---
     if ($NemonuriPreset) {
@@ -55,12 +61,25 @@ function Import-ArcadeScript {
 
         if ([string]::IsNullOrWhiteSpace($RootParentPath)) {
             Write-Debug "RootParentPath is empty"
-            $RootParentPath = (Get-Location).Path
+
+            Write-Debug "global:ArcadeScriptRootParentPath: $global:ArcadeScriptRootParentPath"
+            if ([string]::IsNullOrWhiteSpace($global:ArcadeScriptRootParentPath)) {
+                $RootParentPath = (Get-Location).Path
+            } else {
+                $RootParentPath = $global:ArcadeScriptRootParentPath
+            }
+
             Write-Debug "Set RootParentPath: $RootParentPath"
         }
 
         $RootPath = [Path]::Combine($RootParentPath, ".arcade", ".script")
         Write-Debug "Set RootPath: $RootPath"
+
+        $SubPath = [Path]::GetDirectoryName($ScriptPath)
+        Write-Debug "Set SubPath: $SubPath"
+
+        $Name = [Path]::GetFileNameWithoutExtension($ScriptPath)
+        Write-Debug "Set Name: $Name"
 
         $uriSubPathSegment = ""
         if (-not [string]::IsNullOrWhiteSpace($SubPath)) {
@@ -78,7 +97,7 @@ function Import-ArcadeScript {
     Write-Debug "doesArcadeScriptRootDirectoryExist: $doesArcadeScriptRootDirectoryExist"
 
     if (-not $doesArcadeScriptRootDirectoryExist) {
-        if ($CreateRootDirectoryIfNotExist) {
+        if ($CreateRootDirectory) {
             [Directory]::CreateDirectory($RootPath)
             Write-Host "Arcade script directory created. RootPath: $RootPath"
         } else {
