@@ -30,6 +30,7 @@ function Import-ArcadeScript {
 
         [Parameter(Mandatory, ValueFromPipeline, Position=0, ParameterSetName="NemonuriPreset")]
         [ValidateNotNullOrEmpty()]
+        [Alias("S")]
         [string]$ScriptPath,
 
         [Parameter()]
