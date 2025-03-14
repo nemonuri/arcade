@@ -3,5 +3,4 @@ if (-not (Test-Path "$PSScriptRoot/.arcade")) {
     Import-ArcadeScript -NM -Script "ArcadeScript"    
 }
 
-$ASRoot = "$PSScriptRoot/.arcade/.script"
-. "$ASRoot/ArcadeScript.ps1"
+. "$PSScriptRoot/.arcade/.script"
