@@ -30,7 +30,7 @@ function Import-ArcadeScript {
 
         [Parameter(Mandatory, ValueFromPipeline, Position=0, ParameterSetName="NemonuriPreset")]
         [ValidateNotNullOrEmpty()]
-        [Alias("S")]
+        [Alias("Script")]
         [string]$ScriptPath,
 
         [Parameter()]
@@ -154,7 +154,7 @@ $($v.Content)
     } else {
         Write-Host "Dot sourcing script. $scriptFullPath"
         . $scriptPath
-        $global:ImportedArcadeScripts.Add($scriptFullPath)
+        $v = $global:ImportedArcadeScripts.Add($scriptFullPath)
     }
     #---|
 
