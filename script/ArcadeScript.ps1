@@ -54,6 +54,10 @@ function Import-ArcadeScript {
 
     Write-Debug "Force: $Force"
 
+    if (-not $IsCoreCLR) {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    }
+
     $CreateRootDirectory = -not $NoNewRoot
 
     #--- Set Nemonuri preset if switch actived ---
@@ -137,9 +141,21 @@ $($v.Content)
     }
     #---|
 
+    #--- ---
+    if ($null -eq $global:ImportedArcadeScripts) {
+        $global:ImportedArcadeScripts = [System.Collections.Generic.HashSet[string]]::new()
+    }
+    #---|
+
     #--- Dot sourcing script ---
-    Write-Host "Dot sourcing script. $scriptPath"
-    . $scriptPath
+    $scriptFullPath = [Path]::GetFullPath($scriptPath)
+    if ($global:ImportedArcadeScripts.Contains($scriptFullPath)) {
+        Write-Host "Script already dot sourced. $scriptFullPath"
+    } else {
+        Write-Host "Dot sourcing script. $scriptFullPath"
+        . $scriptPath
+        $global:ImportedArcadeScripts.Add($scriptFullPath)
+    }
     #---|
 
 }
