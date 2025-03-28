@@ -1,1 +1,1 @@
-git submodule https://github.com/nemonuri/arcade ./.arcade
+git submodule add https://github.com/nemonuri/arcade ./.arcade
