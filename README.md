@@ -1,1 +1,1 @@
-iwr https://raw.githubusercontent.com/nemonuri/arcade/master/init.ps1 | . iex
+git submodule https://github.com/nemonuri/arcade ./.arcade
