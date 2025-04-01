@@ -37,7 +37,7 @@ function New-Solution {
     $correctedBasePath = Get-NotEmptyString "$BasePath" (Get-Src)
     Write-Debug "correctedBasePath: $correctedBasePath"
 
-    if (Test-Path $correctedBasePath -PathType 'Container') {
+    if (-not (Test-Path $correctedBasePath -PathType 'Container')) {
         $v = New-Item $correctedBasePath -ItemType 'Directory'
         Write-Debug "New directory created. Path: $v"
     }
