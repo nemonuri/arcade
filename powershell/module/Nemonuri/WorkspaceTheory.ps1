@@ -57,3 +57,16 @@ if ((Test-Path "$PSScriptRoot/../postprofile.ps1")) {. "$PSScriptRoot/../postpro
     New-Item -Path $path -ItemType File -Value $text
 
 }
+
+function Initialize-Workspace {
+    
+    [CmdletBinding()]
+    [Alias("inws")]
+    param (
+        [switch] $Dotnet
+    )
+
+    Initialize-Profile
+    Initialize-ProfiledPowershell
+    
+}
