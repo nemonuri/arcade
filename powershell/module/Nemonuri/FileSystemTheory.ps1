@@ -1,5 +1,21 @@
 using namespace System.IO
 
+function Get-FullPath {
+
+    [OutputType([string])]
+    param (
+        [Parameter(Mandatory, Position=0, ValueFromPipeline)]
+        [string] $Path
+    )
+
+    Write-InvocationInfo $MyInvocation -D
+
+    [string]$fullPath = [Path]::GetFullPath($Path);
+    Write-Debug "fullPath: $fullPath"
+
+    return $fullPath
+}
+
 function Get-ParentItem {
 
     [OutputType([void], [string])]

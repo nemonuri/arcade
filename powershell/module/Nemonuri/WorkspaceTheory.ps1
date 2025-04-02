@@ -1,25 +1,25 @@
 
 function Get-Workspace {
 
-    Join-Path (Get-Arcade) ".." -Resolve
+    Join-Path (Get-Arcade) ".." | Get-FullPath
 
 }
 
 function Get-Src {
     
-    Join-Path (Get-Workspace) "src" -Resolve
+    Join-Path (Get-Workspace) "src" | Get-FullPath
     
 }
 
 function Get-VSCodeConfig {
 
-    Join-Path (Get-Workspace) ".vscode" -Resolve
+    Join-Path (Get-Workspace) ".vscode" | Get-FullPath
     
 }
 
 function Get-VSCodeConfigSetting {
     
-    Join-Path (Get-VSCodeConfig) "settings.json" -Resolve
+    Join-Path (Get-VSCodeConfig) "settings.json" | Get-FullPath
 
 }
 
