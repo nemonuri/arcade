@@ -42,7 +42,8 @@ function New-Solution {
         Write-Debug "New directory created. Path: $v"
     }
 
-    $nameArgs = Get-IfElse [string]::IsNullOrWhiteSpace($Name) @() @("--name", $Name)
+    #$nameArgs = Get-IfElse [string]::IsNullOrWhiteSpace($Name) @() @("--name", $Name)
+    $nameArgs = @("--name", $Name)
     Invoke-Safe { & dotnet new sln @nameArgs --output $correctedBasePath @ArgumentList }
 }
 
